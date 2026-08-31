@@ -1,0 +1,32 @@
+import { Cat, User } from "lucide-react";
+
+export default function Navbar() {
+  return (
+    <header className="border-b border-zinc-200/80 bg-white/90 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500 text-white shadow-sm">
+            <Cat size={21} />
+          </div>
+
+          <div>
+            <div className="text-lg font-black tracking-tight text-zinc-900">
+              CATTO
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="hidden text-right sm:block">
+            <p className="text-sm font-bold text-zinc-900">Narayan</p>
+            <p className="text-xs text-zinc-500">Level 12 · 820 XP</p>
+          </div>
+
+          <button className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-100 text-zinc-600 transition hover:bg-zinc-200">
+            <User size={18} />
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
