@@ -168,7 +168,7 @@ export default function MapPage() {
 
       {/* GPS error */}
       {locationError && (
-        <div className="absolute left-1/2 top-20 z-[1000] -translate-x-1/2 rounded-full bg-red-500 px-4 py-2 text-xs font-semibold text-white shadow-lg">
+        <div className="absolute left-1/2 top-20 z-1000 -translate-x-1/2 rounded-full bg-red-500 px-4 py-2 text-xs font-semibold text-white shadow-lg">
           Unable to get your location
         </div>
       )}

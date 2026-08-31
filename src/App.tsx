@@ -19,20 +19,25 @@ export default function App() {
     <BrowserRouter>
       <div className="h-screen flex flex-col">
         <Navbar />
-        <Routes>
-          <Route path="/" element={<MapPage />} />
+        <div className="flex-1 overflow-y-auto">
+          <Routes>
+            <Route path="/" element={<MapPage />} />
 
-          <Route path="/discover" element={<DiscoverPage />} />
+            <Route path="/discover" element={<DiscoverPage />} />
 
-          <Route
-            path="/collection"
-            element={<Placeholder title="My Cats 🐾" />}
-          />
+            <Route
+              path="/collection"
+              element={<Placeholder title="My Cats 🐾" />}
+            />
 
-          <Route path="/quests" element={<Placeholder title="Quests 🏆" />} />
+            <Route path="/quests" element={<Placeholder title="Quests 🏆" />} />
 
-          <Route path="/profile" element={<Placeholder title="Profile 👤" />} />
-        </Routes>
+            <Route
+              path="/profile"
+              element={<Placeholder title="Profile 👤" />}
+            />
+          </Routes>
+        </div>
 
         <BottomNav />
       </div>
