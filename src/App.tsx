@@ -5,9 +5,6 @@ import BottomNav from "./components/BottomNav";
 
 import MapPage from "./pages/MapPage";
 import DiscoverPage from "./pages/DiscoverPage";
-import CollectionPage from "./pages/CollectionPage";
-import QuestsPage from "./pages/QuestsPage";
-import ProfilePage from "./pages/ProfilePage";
 
 function Placeholder({ title }: { title: string }) {
   return (

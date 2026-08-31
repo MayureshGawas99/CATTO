@@ -8,7 +8,7 @@ interface Props {
 
 export default function CatDetailsCard({ cat, onClose }: Props) {
   return (
-    <div className="absolute bottom-5 left-1/2 z-[1000] w-[calc(100%-32px)] max-w-md -translate-x-1/2 overflow-hidden rounded-3xl bg-white shadow-2xl">
+    <div className="absolute bottom-5 left-1/2 z-1000 w-[calc(100%-32px)] max-w-md -translate-x-1/2 overflow-hidden rounded-3xl bg-white shadow-2xl">
       {/* Image */}
       <div className="relative h-52 overflow-hidden">
         <img

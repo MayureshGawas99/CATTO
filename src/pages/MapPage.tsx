@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { MapContainer, TileLayer, CircleMarker, useMap } from "react-leaflet";
 
-import { LocateFixed, Navigation, LoaderCircle } from "lucide-react";
+import { LocateFixed, LoaderCircle } from "lucide-react";
 
 import { spawnCats } from "../utils/catSpawner";
 
@@ -14,30 +13,6 @@ import type { Cat } from "../types/cat";
 const DEFAULT_LOCATION: [number, number] = [19.186604, 72.972137];
 
 type Coordinates = [number, number];
-
-function calculateDistance(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number,
-) {
-  const earthRadius = 6371000;
-
-  const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
-
-  const dLat = toRadians(lat2 - lat1);
-  const dLon = toRadians(lon2 - lon1);
-
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRadians(lat1)) *
-      Math.cos(toRadians(lat2)) *
-      Math.sin(dLon / 2) ** 2;
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-  return Math.round(earthRadius * c);
-}
 
 function LocationController({
   onLocationFound,
@@ -116,7 +91,6 @@ export default function MapPage() {
 
   const [locationError, setLocationError] = useState(false);
 
-  const navigate = useNavigate();
 
   const handleLocationFound = useCallback((location: Coordinates) => {
     setUserLocation(location);
@@ -183,7 +157,7 @@ export default function MapPage() {
       </MapContainer>
 
       {/* Nearby counter */}
-      <div className="absolute left-4 top-4 z-[1000] rounded-2xl bg-white/95 px-4 py-3 shadow-lg backdrop-blur-xl">
+      <div className="absolute left-4 top-4 z-1000 rounded-2xl bg-white/95 px-4 py-3 shadow-lg backdrop-blur-xl">
         <p className="text-xs font-medium text-zinc-500">Around you</p>
 
         <p className="mt-0.5 font-bold text-zinc-900">
