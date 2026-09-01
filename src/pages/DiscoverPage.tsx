@@ -28,7 +28,22 @@ export default function DiscoverPage() {
     return () => {
       stream?.getTracks().forEach((track) => track.stop());
     };
-  }, []);
+  }, [stream]);
+
+  useEffect(() => {
+    // Stop camera when page becomes hidden (switching tabs/windows)
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stream?.getTracks().forEach((track) => track.stop());
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [stream]);
 
   useEffect(() => {
     if (videoRef.current && stream) {
