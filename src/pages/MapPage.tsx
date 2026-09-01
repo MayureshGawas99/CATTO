@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 
 import { MapContainer, TileLayer, CircleMarker, useMap } from "react-leaflet";
 
@@ -24,53 +24,61 @@ function LocationController({
   const map = useMap();
 
   const [loading, setLoading] = useState(true);
+  const watchIdRef = useRef<number | null>(null);
 
-  const locateUser = useCallback(() => {
+  const startWatching = useCallback(() => {
     setLoading(true);
 
-    map.locate({
-      setView: false,
-      enableHighAccuracy: true,
-      maxZoom: 17,
-    });
-  }, [map]);
-
-  useEffect(() => {
-    const handleLocationFound = (event: any) => {
-      const location: Coordinates = [event.latlng.lat, event.latlng.lng];
-
-      onLocationFound(location);
-
-      map.flyTo(location, 17, {
-        animate: true,
-        duration: 1.5,
-      });
-
-      setLoading(false);
-    };
-
-    const handleLocationError = () => {
+    if (!navigator.geolocation) {
       onLocationError();
       setLoading(false);
-    };
+      return;
+    }
 
-    map.on("locationfound", handleLocationFound);
+    // Start watching position for real-time updates
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      (position) => {
+        const location: Coordinates = [
+          position.coords.latitude,
+          position.coords.longitude,
+        ];
 
-    map.on("locationerror", handleLocationError);
+        onLocationFound(location);
 
-    // Get location automatically on first load
-    locateUser();
+        map.flyTo(location, 17, {
+          animate: true,
+          duration: 1.5,
+        });
+
+        setLoading(false);
+      },
+      () => {
+        onLocationError();
+        setLoading(false);
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 10000,
+      },
+    );
+  }, [map, onLocationFound, onLocationError]);
+
+  useEffect(() => {
+    // Start watching on component mount
+    startWatching();
 
     return () => {
-      map.off("locationfound", handleLocationFound);
-
-      map.off("locationerror", handleLocationError);
+      // Stop watching on unmount
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
     };
-  }, [map, locateUser, onLocationFound, onLocationError]);
+  }, [startWatching]);
 
   return (
     <button
-      onClick={locateUser}
+      onClick={startWatching}
       className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white text-zinc-700 shadow-lg transition hover:bg-zinc-50"
     >
       {loading ? (
@@ -91,7 +99,6 @@ export default function MapPage() {
 
   const [locationError, setLocationError] = useState(false);
 
-
   const handleLocationFound = useCallback((location: Coordinates) => {
     setUserLocation(location);
     setLocationError(false);
@@ -106,7 +113,7 @@ export default function MapPage() {
   }, []);
 
   return (
-    <main className="relative h-screen w-full">
+    <main className="relative h-full w-full">
       <MapContainer
         center={DEFAULT_LOCATION}
         zoom={16}
