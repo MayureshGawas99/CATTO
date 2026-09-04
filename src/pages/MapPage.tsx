@@ -95,7 +95,7 @@ export default function MapPage() {
 
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
 
-  const [nearbyCats, setNearbyCats] = useState<Cat[]>([]);
+  const [nearbyCats] = useState<Cat[]>([]);
 
   const [locationError, setLocationError] = useState(false);
 
