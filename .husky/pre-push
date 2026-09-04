@@ -1,1 +1,1 @@
-echo "npm run build" > .husky/pre-push
+npm run build
