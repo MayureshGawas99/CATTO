@@ -1,12 +1,18 @@
-import { Cat, User } from "lucide-react";
+import { User } from "lucide-react";
+
+import logo from "../assets/logo.png";
 
 export default function Navbar() {
   return (
     <header className="border-b border-zinc-200/80 bg-white/90 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500 text-white shadow-sm">
-            <Cat size={21} />
+        <div className="flex items-center">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl  border-orange-500 text-white">
+            <img
+              src={logo}
+              alt="CATTO logo"
+              className="h-9 w-9 object-contain"
+            />
           </div>
 
           <div>
