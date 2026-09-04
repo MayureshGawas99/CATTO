@@ -4,8 +4,6 @@ import { MapContainer, TileLayer, CircleMarker, useMap } from "react-leaflet";
 
 import { LocateFixed, LoaderCircle } from "lucide-react";
 
-import { spawnCats } from "../utils/catSpawner";
-
 import CatMarker from "../components/CatMarker";
 import CatDetailsCard from "../components/CatDetailsCard";
 import type { Cat } from "../types/cat";
@@ -26,8 +24,16 @@ function LocationController({
   const [loading, setLoading] = useState(true);
   const watchIdRef = useRef<number | null>(null);
 
+  const stopWatching = useCallback(() => {
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+  }, []);
+
   const startWatching = useCallback(() => {
     setLoading(true);
+    stopWatching();
 
     if (!navigator.geolocation) {
       onLocationError();
@@ -45,10 +51,7 @@ function LocationController({
 
         onLocationFound(location);
 
-        map.flyTo(location, 17, {
-          animate: true,
-          duration: 1.5,
-        });
+        map.setView(location, map.getZoom(), { animate: false });
 
         setLoading(false);
       },
@@ -59,22 +62,19 @@ function LocationController({
       {
         enableHighAccuracy: true,
         maximumAge: 0,
-        timeout: 10000,
+        timeout: 20000,
       },
     );
-  }, [map, onLocationFound, onLocationError]);
+  }, [map, onLocationFound, onLocationError, stopWatching]);
 
   useEffect(() => {
     // Start watching on component mount
     startWatching();
 
     return () => {
-      // Stop watching on unmount
-      if (watchIdRef.current !== null) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
-      }
+      stopWatching();
     };
-  }, [startWatching]);
+  }, [startWatching, stopWatching]);
 
   return (
     <button
@@ -102,10 +102,6 @@ export default function MapPage() {
   const handleLocationFound = useCallback((location: Coordinates) => {
     setUserLocation(location);
     setLocationError(false);
-
-    const spawnedCats = spawnCats(location, 8);
-
-    setNearbyCats(spawnedCats);
   }, []);
 
   const handleLocationError = useCallback(() => {
@@ -170,6 +166,12 @@ export default function MapPage() {
         <p className="mt-0.5 font-bold text-zinc-900">
           {nearbyCats.length} {nearbyCats.length === 1 ? "cat" : "cats"} nearby
           🐾
+        </p>
+
+        <p className="mt-1 text-[11px] font-medium tabular-nums text-zinc-500">
+          {userLocation
+            ? `${userLocation[0].toFixed(6)}, ${userLocation[1].toFixed(6)}`
+            : "Locating..."}
         </p>
       </div>
 
