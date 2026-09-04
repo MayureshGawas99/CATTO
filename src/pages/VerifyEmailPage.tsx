@@ -20,7 +20,7 @@ export default function VerifyEmailPage() {
     const verifyToken = async () => {
       try {
         // Access Vite environment variable using import.meta.env
-        const API_URL = import.meta.env.VITE_API_BASE_URL;
+        // const API_URL = import.meta.env.VITE_API_BASE_URL;
 
         // const response = await axios.post(`${API_URL}/auth/verify-link`, {
         //   token,
