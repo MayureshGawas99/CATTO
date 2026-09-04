@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Camera, Check, RotateCcw, X, Zap } from "lucide-react";
+import { Camera, Check, RotateCcw, SwitchCamera, X, Zap } from "lucide-react";
 
 type CameraState = "starting" | "camera" | "preview" | "scanning" | "success";
+type FacingMode = "environment" | "user";
 
 export default function DiscoverPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const requestIdRef = useRef(0);
+  const facingModeRef = useRef<FacingMode>("environment");
 
   const [state, setState] = useState<CameraState>("starting");
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -20,37 +22,40 @@ export default function DiscoverPage() {
     setStream(null);
   }, []);
 
-  const startCamera = useCallback(async () => {
-    stopCamera();
-    const requestId = requestIdRef.current;
-    setState("starting");
-
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: "environment",
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-        },
-        audio: false,
-      });
-
-      if (requestId !== requestIdRef.current) {
-        mediaStream.getTracks().forEach((track) => track.stop());
-        return;
-      }
-
-      streamRef.current = mediaStream;
-      setStream(mediaStream);
-      setState("camera");
-    } catch (error) {
-      console.error("Camera error:", error);
+  const startCamera = useCallback(
+    async (facingMode: FacingMode) => {
+      stopCamera();
+      const requestId = requestIdRef.current;
       setState("starting");
-    }
-  }, [stopCamera]);
+
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode,
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: false,
+        });
+
+        if (requestId !== requestIdRef.current) {
+          mediaStream.getTracks().forEach((track) => track.stop());
+          return;
+        }
+
+        streamRef.current = mediaStream;
+        setStream(mediaStream);
+        setState("camera");
+      } catch (error) {
+        console.error("Camera error:", error);
+        setState("starting");
+      }
+    },
+    [stopCamera],
+  );
 
   useEffect(() => {
-    void startCamera();
+    void startCamera(facingModeRef.current);
 
     return stopCamera;
   }, [startCamera, stopCamera]);
@@ -66,7 +71,7 @@ export default function DiscoverPage() {
       if (document.hidden) {
         stopCamera();
       } else if (state === "camera" && !streamRef.current) {
-        void startCamera();
+        void startCamera(facingModeRef.current);
       }
     };
 
@@ -102,7 +107,15 @@ export default function DiscoverPage() {
 
   function retake() {
     setPhoto(null);
-    void startCamera();
+    void startCamera(facingModeRef.current);
+  }
+
+  function changeCamera() {
+    const nextFacingMode: FacingMode =
+      facingModeRef.current === "environment" ? "user" : "environment";
+
+    facingModeRef.current = nextFacingMode;
+    void startCamera(nextFacingMode);
   }
 
   function scanForCat() {
@@ -167,7 +180,15 @@ export default function DiscoverPage() {
             Cat Hunt
           </div>
 
-          <div className="w-11" />
+          <button
+            onClick={changeCamera}
+            disabled={state !== "camera"}
+            aria-label="Change camera"
+            title="Change camera"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur transition hover:bg-black/60 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <SwitchCamera size={20} />
+          </button>
         </div>
 
         {/* Scanning overlay */}
@@ -253,7 +274,7 @@ export default function DiscoverPage() {
 function SuccessOverlay() {
   return (
     <div className="absolute inset-0 flex items-end justify-center bg-black/20">
-      <div className="w-full max-w-md rounded-t-[32px] bg-white p-7 text-center shadow-2xl">
+      <div className="w-full max-w-md rounded-t-4xl bg-white p-7 text-center shadow-2xl">
         <div className="mx-auto -mt-20 mb-4 flex h-24 w-24 items-center justify-center rounded-full border-8 border-white bg-orange-500 text-5xl shadow-xl">
           🐈
         </div>
