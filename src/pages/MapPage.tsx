@@ -79,7 +79,7 @@ function LocationController({
   return (
     <button
       onClick={startWatching}
-      className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white text-zinc-700 shadow-lg transition hover:bg-zinc-50"
+      className="absolute right-4 top-4 z-1000 flex h-11 w-11 items-center justify-center rounded-full bg-white text-zinc-700 shadow-lg transition hover:bg-zinc-50"
     >
       {loading ? (
         <LoaderCircle size={19} className="animate-spin" />
@@ -107,7 +107,6 @@ export default function MapPage() {
   const handleLocationError = useCallback(() => {
     setLocationError(true);
   }, []);
-
   return (
     <main className="relative h-full w-full">
       <MapContainer

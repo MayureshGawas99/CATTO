@@ -19,7 +19,7 @@ export default function App() {
     <BrowserRouter>
       <div className="h-screen flex flex-col">
         <Navbar />
-        <div className="flex-1 overflow-y-auto">
+        <div className="min-h-0 grow overflow-hidden">
           <Routes>
             <Route path="/" element={<MapPage />} />
 
