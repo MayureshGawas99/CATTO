@@ -20,13 +20,13 @@ export default function VerifyEmailPage() {
     const verifyToken = async () => {
       try {
         // Access Vite environment variable using import.meta.env
-        // const API_URL = import.meta.env.VITE_API_BASE_URL;
+        const API_URL = import.meta.env.VITE_API_BASE_URL;
+        console.log("verifying", API_URL);
 
-        // const response = await axios.post(`${API_URL}/auth/verify-link`, {
-        //   token,
-        //   email,
-        // });
-        const response = { data: { message: "Verify Successfull!" } };
+        const response = await axios.get(
+          `${API_URL}/api/auth/verify-email/${token}`,
+        );
+        // const response = { data: { message: "Verify Successfull!" } };
 
         setStatus(response.data.message);
         setIsSuccess(true);
@@ -35,6 +35,7 @@ export default function VerifyEmailPage() {
           navigate("/login");
         }, 3000);
       } catch (error) {
+        console.log(error);
         const errorMessage = axios.isAxiosError(error)
           ? error.response?.data?.message ||
             "Verification failed. Please try again."
